@@ -148,7 +148,20 @@ parameters 报错在 `aw_apimgt -> api-selector_card_grid` [无关]
 
 - 在注册事件或触发事件时,需要将对应的组件id也放入事件中,使用`single-select`可以传递`id`给对应的组件,但目前方案只能将id固定[考虑到该事件的独特性,页面中只有一个组件在使用该事件]
 
--------
+------- 2019-8-12
+
+1. 关于自定义图表的`sparkline`报错问题 [解决了?]
+- 原因是有在js-loader的实现中,自己引入了一个JQuery,但未在该JQuery上面挂载sparkli
+e,在html页面中虽然使用`requirejs`导入了`sparkline`,但并未使用
+
+2. 找点BUG?
+  - 跑马灯
+  - 自定义图表
+    - 页面css不会执行,虽然脚本加入了页面,但其上加了pageKey来作为标识[css-loader.js -> addStyle]
+    - js 执行正常
+
+  - 雷达图
+    - `title`的配置`left`项无效,`legend`配置有效,原编辑器也有这个问题
 
 ## 远程调试
 - 确认 gulp 服务器配置 `/code/UIservice/.config`
@@ -163,14 +176,11 @@ parameters 报错在 `aw_apimgt -> api-selector_card_grid` [无关]
 ## ADCUICLI 
 `使用 yeoman 来通过预先创建好的 generator 来创建本地应用`
 
-1. 执行`npm run build`来构建全局的`procode`工具,但只是
-构建好了工具的压缩包,还需要依赖`npm link` 来链接到全局:
+1. 执行`npm run build`来构建全局的`procode`工具,但只是 构建好了工具的压缩包,还需要依赖`npm link` 来链接到全局:
 - 执行`build/`下的`index.js`:
   - `params`获取当前进程的运行时的环境变量
-  - `build` 创建暂存目录,讲需要的文件拷贝到暂存目录中,
-  为其中的`package.json`写入依赖信息,返回应用的名字和版本
-  - `install` 在暂存目录 执行了`npm install --production`,
-  返回了
+  - `build` 创建暂存目录,讲需要的文件拷贝到暂存目录中, 为其中的`package.json`写入依赖信息,返回应用的名字和版本
+  - `install` 在暂存目录 执行了`npm install --production`, 返回了
   - `pkg` 讲暂存文件夹中的文件打成`tar`包
   - `clear` 移除暂存文件夹
 
@@ -206,11 +216,15 @@ http.get('url',(res)=>{
 
 4. 使用handsontable创建数据表格 [v]
 
-5. 使用`Element`的组件
-- 通过label搜索
-- value为实际选中的值
+5. 使用`Element`的组件 [v]
 
 6. vue.extend()
+
+7. 混入
+
+8. slot, 布局
+
+9. 前端模块化
 
 -------------
 
