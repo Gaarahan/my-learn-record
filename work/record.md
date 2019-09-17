@@ -163,6 +163,42 @@ e,在html页面中虽然使用`requirejs`导入了`sparkline`,但并未使用
   - 雷达图
     - `title`的配置`left`项无效,`legend`配置有效,原编辑器也有这个问题
 
+------- 2019-9-9
+0. 组件拖拽功能 : 
+  在`view-manager.js`中,定义了组件拖拽的行为:
+  
+  - `onDragEnter` : 拖拽进入某个组件. 拿到当前进入的组件,并将其背景色改为深蓝
+
+  - `onDragLeave` : 离开某个组件, 对应进入,移除样式
+
+  - `onDrop` : 落下组件到父组件中.
+  -> 移除对应背景色样式, 拿到拖动组件的数据,以及父组件在pageTree中的节点,执行 `addTreeNodeCommand`命令 
+  -> PageTree.vue中注册的`ADD_TREE_NODE`事件: 
+  获取到需要插入的组件信息,并将其插入到对应的父组件`parentNode.insertChild()`及配置树`PageObjectStore.put()`之下
+
+  - `allowDrop` : 
+1. spl-designer 组件的嵌套
+  stickyPanel 与 calendarPanel 组件 ? 
+
+-------- 2019-9-11
+- procode 高级页面开发Bug卡: 
+1. 修改 : procode_advanced_page-> advanced_page_develop.css [v] padding~
+2. procode_import_project -> procode_common.css  min-width:480px 
+3. import_project -> js 
+Nf.getYmPrompt().win -> Nf.promptError()
+成功后刷新不能再使用location,studioui -> protol
+使用 NfLayout.setCurrentTabUrl(url) 来跳转  [v]
+4. 导入项目的失败回调中 修改 : Nf.ResourceBundle[] -> Nf.res() 其它地方? 
+5.  跳转成功后顶部栏空白 [v]
+6. 归档, 更新`app_dev_menu`数据库后归档
+7. 所有使用`Mf.getYmPrompt()`都有问题?
+
+-------- 2019-9-12
+1. 高级页面开发js 第九行逻辑
+
+-------- 2019-9-16
+1. 高级页面开发
+
 ## 远程调试
 - 确认 gulp 服务器配置 `/code/UIservice/.config`
 - 开启 `gulp watch`
