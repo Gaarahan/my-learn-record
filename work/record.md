@@ -194,10 +194,9 @@ Nf.getYmPrompt().win -> Nf.promptError()
 7. 所有使用`Mf.getYmPrompt()`都有问题?
 
 -------- 2019-9-12
-1. 高级页面开发js 第九行逻辑
+1. 高级页面开发js 第九行逻辑 appId ?
 
 -------- 2019-9-16
-1. 高级页面开发
 
 ## 远程调试
 - 确认 gulp 服务器配置 `/code/UIservice/.config`
