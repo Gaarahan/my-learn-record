@@ -23,6 +23,10 @@ export function initUse (Vue: GlobalAPI) {
     return this
   }
 }
+
+twice = function(number){
+  return factor*number
+}
 ```
 **为Vue实例挂载一个Vue.use方法** :
 - toArray 方法的作用是将一个类数组对象转化为数组

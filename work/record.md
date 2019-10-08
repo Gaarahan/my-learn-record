@@ -196,7 +196,34 @@ Nf.getYmPrompt().win -> Nf.promptError()
 -------- 2019-9-12
 1. 高级页面开发js 第九行逻辑 appId ?
 
--------- 2019-9-16
+-------- 2019-9-24
+1. apiwindow大小
+2. vs编辑器国际化
+
+-------- 2019-9-25
+- 保存问题
+  1. 新建脚本不会被保存
+  2. 删除脚本也会保存旧的
+  3. 代码转义
+- 自定义组件bug :
+ 1. 样式 : IE textarea的bug [v]
+ 2. 选中状态 : click 触发两次,ie 和 chrome 中innerValue不一致  使用节流?防抖?[v]
+
+ ------- 2019-9-27
+ 1. 组件属性数据: 
+  - [page-object-store] `put`方法为对象添加一个`data`属性
+
+  - `get` 从自身的 `obiMap`中通过`id`取值
+
+  - [properties-panel] 初始化事件时 注册的点击事件,从`PageObjectStore.get(id)`获取
+
+  - 构建行编辑器时,从`currentPageObject.data`获取 
+
+2. 数据的`type` 应该是 `PROPERTY`, `STYLE`, `VALIDATION`,
+`EVENT`,`TOOLBAR`,`ZOVERVIEW`
+
+ ------ 
+
 
 ## 远程调试
 - 确认 gulp 服务器配置 `/code/UIservice/.config`
