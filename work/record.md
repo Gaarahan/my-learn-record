@@ -254,8 +254,6 @@ Nf.getYmPrompt().win -> Nf.promptError()
 - 生成每个工程的流程文件在渲染器的`app` 目录下`index.js`
 - 定义的每个方法都会顺序的执行一遍
 
-
-
 ## 接触
 1. 使用请求下载文件                                    [v]
 ```javaScript
