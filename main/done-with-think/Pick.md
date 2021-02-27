@@ -1,26 +1,10 @@
 ## 实现Pick
 
 ```typescript
-interface Todo {
-title: string
-description: string
-completed: boolean
-}
-
-// code here
-
 type MyPick<T, K extends keyof T> = {
     [P in K]: T[P]
 }
 
-// ---
-
-type TodoPreview = MyPick<Todo, 'title' | 'completed'>
-
-const todo: TodoPreview = {
-title: 'Clean room',
-completed: false,
-}
 ```
 
 1. `keyof SomeType` 会拿到这个类型中所有`key`的联合， 如： 
