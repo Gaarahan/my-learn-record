@@ -7,6 +7,26 @@
 装饰器本质上是在借助`Object.defineProperty`，对已有的类中的字段（类，方法，参数，属性）进行修改。
 
 ### 基本的编译后结构
+原始代码：
+```typescript
+function logProperty() {}
+function logClass() {}
+function logMethod() {}
+
+@logClass
+class Test{
+  @logProperty
+  han: string = 'hanzhaofeng';
+
+  @logMethod
+  rename(@logParam name: string) {}
+}
+
+
+const han = new Test();
+```
+
+编译后的代码：
 ```javascript
 // 装饰函数
 var __decorate = /* */;
@@ -15,7 +35,7 @@ var __metadata = /* */;
 // 装饰器代码
 function logProperty() { /* */ }
 
-// 被装饰的类
+// 被装饰的类的原始代码
 class Test { /* */ }
 
 __decorate(/* */); // 执行属性装饰器
@@ -28,6 +48,7 @@ __decorate(/* */); // 执行类装饰器
 #### 关于调用时机:
 
 `TODO: 1. 整理装饰器的执行顺序，2. 参数装饰器和方法装饰器谁先执行？`
+
 可以看到，在类声明之后，装饰器会立马被执行, 且各个装饰器之间的存在执行顺序的差别.
 
 #### 关于调用方式
@@ -92,6 +113,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 ```
 
+### 装饰器工厂
+
+`TODO： 文档中有一个很好的例子，log装饰器在不同的位置使用`
+
 > 参考概念
 > [属性描述符](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty)
+>
 > [TS中的装饰器与元数据](http://blog.wolksoftware.com/decorators-reflection-javascript-typescript) : 很详细的一篇博客，但时间有点久了，编译后代码发生了一些变化
