@@ -1,14 +1,37 @@
-# 装饰器session大致架构
+# 装饰器session
 
 ### 装饰器是什么
 
-### 什么时候可以使用装饰器
+- 装饰器本质上是一个特殊的函数，它的定义跟使用方式都具有一定的规范: 
+```typescript
+function logProperty(
+  target: any,
+  key: string,
+  descriptor: PropertyDescriptor
+) {}
+function logClass() {}
+function logMethod() {}
+function logParam() {}
+
+@logClass
+class Test{
+  @logProperty
+  name: string = 'gaarahan';
+
+  @logMethod
+  rename(@logParam name: string) {}
+}
+```
+
+### 作用及使用场景
+
+- 装饰器提供了一种特殊的组织代码的方式。使得我们能够在**不修改已有代码的前提下，为类中的成员增加额外的功能**
 
 ### 从编译后的代码看装饰器
 
 - 解答一个问题： 参数装饰器能干啥
 
-- 原理
+- 原理: 装饰器本质上是在借助`Object.defineProperty`，对已有的类中的字段（类，方法，参数，属性）进行修改
 
 - 从编译后代码反推使用方式
 
