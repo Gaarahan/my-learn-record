@@ -59,9 +59,8 @@ __decorate(/* */); // 执行类装饰器
 
 
 ### 编译后核心代码
-代码来自[TS-PLAYGROUNG](https://www.typescriptlang.org/play/), 调整了参数名称及格式化，以提升可读性
-
-```javascript
+代码来自[TS-PLAYGROUNG](https://www.typescriptlang.org/play/), TS版本`V4.1.5`, 调整了参数名称及格式化，以提升可读性
+```js
 /*
  * 装饰函数： 不同于我们在代码中所定义的具体的装饰器的实现，该函数是执行我们所定义装饰器的地方
  *
@@ -88,17 +87,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
               : desc
           ),
 
-  // decorator用于在后续运算中存储我们所定义的装饰器
+  // decorator用于在后续运算中存储我们所定义的装饰器, 此处只声明
   decorator;
 
+  // 此处判断是因为TS在设计时,期待装饰器是标准函数的一部分(位于Reflect对象上), 但目前浏览器还不支持此方法,if内的代码不会执行
   if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
     descriptorOfKey = Reflect.decorate(decorators, target, key, desc);
   else
+    // 这里是调用装饰器的地方, 根据传入参数不同, 以不同的方式调用装饰器(分别对应不同的装饰器类型)
     for (var i = decorators.length - 1; i >= 0; i--)
       if (decorator = decorators[i])
         descriptorOfKey = (
           argsLength < 3
-          ? decorator(descriptorOfKey)
+          ? decorator(descriptorOfKey)  // 
           : (
             argsLength > 3
             ? decorator(target, key, descriptorOfKey)
