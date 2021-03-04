@@ -152,3 +152,31 @@ x = {
 - 我能借助reflection实现依赖注入吗？
 
 - 当我使用方法装饰器修改方法时，this的指向还能生效吗？
+装饰器修改方法时,替换了原来的方法. 而在原调用处的调用方式并不会发生变化,因此,新方法中的this指向还是正确的
+但如果此时新方法中还需要调用旧的方法,需要自己维护this指向
+```typescript
+function log(
+  target: any,
+  key: string,
+  descriptor: any
+) {
+  const originMethod = descriptor.value;
+  
+  descriptor.value = function (...args: any[]) {
+    console.log('Name: ' + this.name);
+    originMethod.call(this, args)
+  }
+}
+
+class Test {
+  name = 'before-change';
+
+  @log
+  rename(val: string) {
+    this.name = val;
+  }
+}
+
+const a = new Test();
+a.rename('after-change')
+```
