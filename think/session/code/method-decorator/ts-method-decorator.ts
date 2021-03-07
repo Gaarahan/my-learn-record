@@ -1,11 +1,11 @@
 class MethodDecoratorTest {
-  @log
+  @logMethodTest
   foo(input: number) {
     return input * 2;
   }
 }
 
-function log(target: object, propertyKey: string, descriptor: any) {
+function logMethodTest(target: object, propertyKey: string, descriptor: any) {
   return {
     value: function (...args: any[]) {
       var a = args.map((a) => JSON.stringify(a)).join();

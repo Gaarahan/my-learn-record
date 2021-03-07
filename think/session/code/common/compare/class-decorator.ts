@@ -1,10 +1,10 @@
 
 @rename
-class ClassDecoratorTest {
+class ClassDecoratorTestCompare {
   name = 'name';
 }
 
-function rename<T extends {new (...args: any[]): {}}>(
+function renamed<T extends {new (...args: any[]): {}}>(
     constructor: T
 ) {
   return class extends constructor {
@@ -16,4 +16,4 @@ function rename<T extends {new (...args: any[]): {}}>(
   }
 }
 
-new ClassDecoratorTest();
+new ClassDecoratorTestCompare();
