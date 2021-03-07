@@ -4,19 +4,15 @@
 
 - 装饰器本质上是一个特殊的函数，它的定义跟使用方式都具有一定的规范: 
 ```typescript
-function logProperty(
-  target: any,
-  key: string,
-  descriptor: PropertyDescriptor
-) {}
 function logClass() {}
+function logProperty() {}
 function logMethod() {}
 function logParam() {}
 
 @logClass
 class Test{
   @logProperty
-  name: string = 'gaarahan';
+  name: string = 'name';
 
   @logMethod
   rename(@logParam name: string) {}
