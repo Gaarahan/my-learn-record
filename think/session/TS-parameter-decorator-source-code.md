@@ -82,7 +82,7 @@ var __decorate =
        *    desc = null 时, descriptorOfKey = Object.getOwnPropertyDescriptor(target, key)；
        *    desc != null 时, descriptorOfKey = desc
        */
-      descriptorOfKey =
+      targetOrDescriptorOfKey =
         argsLength < 3
           ? target
           : desc === null
@@ -93,7 +93,7 @@ var __decorate =
 
     // 此处判断是因为 TS 在设计时, 期待装饰器是标准函数的一部分(位于 Reflect 对象上), 但目前浏览器还不支持此方法, if 内的代码不会执行
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") {
-      descriptorOfKey = Reflect.decorate(decorators, target, key, desc);
+      targetOrDescriptorOfKey = Reflect.decorate(decorators, target, key, desc);
     } else {
       // 这里是调用装饰器的地方, 根据传入参数不同, 以不同的方式调用装饰器(分别对应不同的装饰器类型)
       /**
@@ -103,19 +103,19 @@ var __decorate =
        */
       for (var i = decorators.length - 1; i >= 0; i--)
         if ((decorator = decorators[i]))
-          descriptorOfKey =
+          targetOrDescriptorOfKey =
             (argsLength < 3
-              ? decorator(descriptorOfKey)
+              ? decorator(targetOrDescriptorOfKey)
               : argsLength > 3
-              ? decorator(target, key, descriptorOfKey)
-              : decorator(target, key)) || descriptorOfKey;
+              ? decorator(target, key, targetOrDescriptorOfKey)
+              : decorator(target, key)) || targetOrDescriptorOfKey;
     }
 
     return (
       argsLength > 3 &&
-        descriptorOfKey &&
-        Object.defineProperty(target, key, descriptorOfKey),
-      descriptorOfKey
+        targetOrDescriptorOfKey &&
+        Object.defineProperty(target, key, targetOrDescriptorOfKey),
+      targetOrDescriptorOfKey
     );
   };
 ```
