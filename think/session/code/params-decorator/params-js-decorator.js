@@ -31,9 +31,10 @@ function logMethod(target, key, desc) {
 }
 
 /*  write your code here */
-// declare type PropertyDecorator = (target: Object, propertyKey: string | symbol) => void;
+// declare type ParameterDecorator = (target: Object, propertyKey: string | symbol, parameterIndex: number) => void;
+// Tips: 方法装饰器的目的 将需要操作的参数定义在类的原型上, 结合其他装饰器读取并进行具体得操作 
 
-// 实现:
+// TODO TS: 实现对应装饰函数
 // 参数装饰器设计之中的灵魂 :
 //    参数装饰器不应该修改所属函数的任何内容, 但目前参数构造器所提供的内容足够完成修改的操作
 function __decorate(decorator, target, key, index) {
@@ -42,9 +43,10 @@ function __decorate(decorator, target, key, index) {
   Object.defineProperty(target, key, oldDescriptor);
 }
 
-// 调用方式:
+// TODO 编译器： 硬编码调用装饰函数及装饰器
 __decorate(log, Student.prototype, 'setName', 0)
-// 目的: 参数装饰器的目的 -> 将需要操作的参数定义在类的原型上, 结合其他装饰器读取并进行具体得操作
+
+/*  -------------------- */
 
 function __decorateForKlass(decorator, target, propertyKey) {
   const descriptorOfKeyOld = Object.getOwnPropertyDescriptor(target, propertyKey);
@@ -53,6 +55,5 @@ function __decorateForKlass(decorator, target, propertyKey) {
 }
 __decorateForKlass(logMethod, Student.prototype, 'setName')
 
-/*  -------------------- */
 
 new Student().setName('li lei');

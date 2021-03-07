@@ -27,12 +27,12 @@ function logWhenChange(target, key) {
 /*  write your code here */
 // declare type PropertyDecorator = (target: Object, propertyKey: string | symbol) => void;
 
-// 实现:
+// TODO TS: 实现对应装饰函数
 function __decorate(decorator, target, key) {
   decorator(target, key)
 }
 
-// 调用方式:
+// TODO 编译器： 硬编码调用装饰函数及装饰器
 __decorate(logWhenChange, User.prototype, 'userName')
 // 目的: 属性装饰器的目的 -> 修改类上的某个属性, 且保证对其所有实例都生效.
 
