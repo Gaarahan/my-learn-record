@@ -98,7 +98,7 @@ var __decorate =
       // 这里是调用装饰器的地方, 根据传入参数不同, 以不同的方式调用装饰器(分别对应不同的装饰器类型)
       /**
        * argsLength < 3 类装饰器, descriptorOfKey = decorator(descriptorOfKey);
-       * argsLength > 3 方法,属性装饰器, descriptorOfKey = decorator(target, key, descriptorOfKey);
+       * argsLength > 3 方法,属性,参数装饰器, descriptorOfKey = decorator(target, key, descriptorOfKey);
        */
       //TODO: argsLength = 3 ???装饰器, descriptorOfKey = decorator(target, key);
       for (var i = decorators.length - 1; i >= 0; i--)
