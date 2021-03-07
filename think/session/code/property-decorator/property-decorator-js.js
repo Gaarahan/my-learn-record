@@ -1,5 +1,4 @@
 class User {
-  @logWhenChange
   userName = 'han mei mei';
 
   setName() {
@@ -32,8 +31,6 @@ function logWhenChange(target, key) {
 function __decorate(decorator, target, key) {
   decorator(target, key)
 }
-
-// 1.
 
 // 调用方式:
 __decorate(logWhenChange, User.prototype, 'userName')

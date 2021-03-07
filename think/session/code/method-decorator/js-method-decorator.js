@@ -19,9 +19,9 @@ function log(target, propertyKey, descriptor) {
 /*  write your code here */
 // Tips: 方法装饰器
 function __decorator(decorator, target, propertyKey) {
-  descriptorOfKeyOld = Object.getOwnPropertyDescriptor(target, propertyKey);
-  descriptorOfKey = decorator(target, propertyKey, descriptorOfKeyOld);
-  Object.defineProperty(target, propertyKey, descriptorOfKey);
+  const descriptorOfKeyOld = Object.getOwnPropertyDescriptor(target, propertyKey);
+  const descriptorOfKey = decorator(target, propertyKey, descriptorOfKeyOld);
+  Object.defineProperty(target, propertyKey, descriptorOfKey || descriptorOfKeyOld);
 }
 
 __decorator(log, MethodDecoratorTest.prototype, "foo");
