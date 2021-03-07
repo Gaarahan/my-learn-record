@@ -1,13 +1,13 @@
 @rename
-class Test {
-  name = 'han';
+class ClassDecoratorTest {
+  name = 'name';
 }
 
 function rename<T extends {new (...args: any[]): {}}>(
     constructor: T
 ) {
   return class extends constructor {
-    name = 'gaarahan';
+    name = 'new name';
     constructor(...args: any[]) {
       super(args)
       console.log(this.name);
@@ -15,4 +15,4 @@ function rename<T extends {new (...args: any[]): {}}>(
   }
 }
 
-new Test()
+new ClassDecoratorTest();
