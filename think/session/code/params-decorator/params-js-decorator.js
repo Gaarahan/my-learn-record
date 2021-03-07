@@ -37,14 +37,11 @@ function logMethod(target, key, desc) {
 // TODO TS: 实现对应装饰函数
 // 参数装饰器设计之中的灵魂 :
 //    参数装饰器不应该修改所属函数的任何内容, 但目前参数构造器所提供的内容足够完成修改的操作
-function __decorate(decorator, target, key, index) {
-  const oldDescriptor = Object.getOwnPropertyDescriptor(target, key);
-  decorator(target, key, index)
-  Object.defineProperty(target, key, oldDescriptor);
+function __decorate() {
 }
 
 // TODO 编译器： 硬编码调用装饰函数及装饰器
-__decorate(log, Student.prototype, 'setName', 0)
+__decorate()
 
 /*  -------------------- */
 

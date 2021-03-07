@@ -21,14 +21,11 @@ function log(target, propertyKey, descriptor) {
 // Tips: 方法装饰器的目的是通过对属性描述符的修改，来修改对应的方法
 
 // TODO TS: 实现对应装饰函数
-function __decorator(decorator, target, propertyKey) {
-  const descriptorOfKeyOld = Object.getOwnPropertyDescriptor(target, propertyKey);
-  const descriptorOfKey = decorator(target, propertyKey, descriptorOfKeyOld);
-  Object.defineProperty(target, propertyKey, descriptorOfKey || descriptorOfKeyOld);
+function __decorator() {
 }
 
 // TODO 编译器： 硬编码调用装饰函数及装饰器
-__decorator(log, MethodDecoratorTest.prototype, "foo");
+__decorator();
 
 /*  -------------------- */
 
