@@ -1,5 +1,5 @@
 
-@rename
+@renamed
 class ClassDecoratorTestCompare {
   name = 'name';
 }

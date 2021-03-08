@@ -10,20 +10,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 
-
-let ClassDecoratorTest = class ClassDecoratorTest {
+let ClassDecoratorTestCompare = class ClassDecoratorTestCompare {
     constructor() {
         this.name = 'name';
     }
 };
 
 // 编译器的工作：  以硬编码方式为装饰函数传参并执行
-ClassDecoratorTest = __decorate([
-    rename
-], ClassDecoratorTest);
+ClassDecoratorTestCompare = __decorate([
+    renamed
+], ClassDecoratorTestCompare);
 
 // 装饰器的具体实现
-function rename(constructor) {
+function renamed(constructor) {
     return class extends constructor {
         constructor(...args) {
             super(args);

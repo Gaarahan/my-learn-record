@@ -15,22 +15,21 @@ function rename(constructor) {
   };
 }
 
+/*  write your code here */
 /**
- * Tips: 类装饰器
+ * 类装饰器
  * 
  * declare type ClassDecorator = <TFunction extends Function>(target: TFunction) => TFunction | void;
  */
+// Tips: 类装饰器的目的是使用装饰器返回的新的类，替换原有的类的实现
 
-/*  write your code here */
-// 实现
+// TODO TS: 实现对应装饰函数
 function __decorate(decorator, klass) {
   return decorator(klass);
 }
 
-// 调用方式
+// TODO 编译器： 硬编码调用装饰函数及装饰器
 ClassDecoratorTest = __decorate(rename, ClassDecoratorTest);
-
-// 目的
 
 /*  -------------------- */
 
