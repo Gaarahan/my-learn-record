@@ -32,3 +32,12 @@ function logMethod(target: any, key: string, desc: PropertyDescriptor) {
 }
 
 new Student().setName('li lei');
+
+// 来自TC39:
+//    Decorators should affect the thing they're decorating, and avoid confusing/non-local effects.
+
+// 参数装饰器设计之中的灵魂:
+//    参数装饰器不应该修改所属函数的任何内容
+
+// 问题:
+//    但目前参数装饰器所提供的内容足够完成修改的操作

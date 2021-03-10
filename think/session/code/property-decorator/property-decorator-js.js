@@ -1,9 +1,5 @@
 class User {
   userName = 'han mei mei';
-
-  setName() {
-    this.userName = 'li lei';
-  }
 }
 
 function logWhenChange(target, key) {
@@ -26,15 +22,18 @@ function logWhenChange(target, key) {
 
 /*  write your code here */
 // declare type PropertyDecorator = (target: Object, propertyKey: string | symbol) => void;
-// Tips: 属性装饰器的目的: 修改类上的某个属性, 且保证对其所有实例都生效.
+// Tips: 属性装饰器目的: 修改类上的某个属性, 且保证对其所有实例都生效.
 
 // TODO TS: 实现对应装饰函数
-function __decorate() {
+// TODO 怎么修改?
+function __decorate(decorator, target, key) {
+  decorator(target, key);
 }
 
 // TODO 编译器： 硬编码调用装饰函数及装饰器
-__decorate()
+// TODO 修改成什么样子? 修改什么?
+__decorate(logWhenChange, User.prototype, 'userName');
 
 /*  -------------------- */
 
-new User().setName();
+new User();

@@ -61,9 +61,9 @@ __decorate(/* */); // 执行类装饰器
  * __decorate 装饰函数：不同于我们在代码中所定义的具体的装饰器的实现，该函数是 ts 编译成 js 之后，执行我们所定义的装饰器的函数
  *
  * @param {*} decorators 在某一类、方法、属性或参数上调用的所有装饰器的数组
- * @param {*} target 我们所装饰的对象其本身或其原型（视具体装饰器的类型和所装饰的对象所定,可参考引用文章, TODO 补充简易场景归类）
+ * @param {*} target 我们所装饰的对象其本身或其原型（视具体装饰器的类型和所装饰的对象所定,可参考引用文章）
  * @param {*} key 所装饰属性的名称 key
- * @param {*} desc 所装饰属性的描述符 descriptor（TODO 待补充说明传参场景）
+ * @param {*} desc 所装饰属性的描述符 descriptor
  * @return {*}
  */
 // 判断装饰函数是否已经存在，未存在则声明
@@ -73,7 +73,7 @@ var __decorate =
     // 定义三个变量:
     // argsLength 为传入参数长度
     var argsLength = arguments.length,
-      // descriptorOfKey 为当前所装饰字段的属性描述符 * 或装饰对象实例（TODO 补充）
+      // descriptorOfKey 为当前所装饰字段的属性描述符 * 或装饰对象实例
       /**
        * 定义 descriptorOfKey, 根据传入参数不同, 以不同的方式定义
        *
