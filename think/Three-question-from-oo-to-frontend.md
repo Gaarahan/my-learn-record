@@ -42,4 +42,5 @@ class Person {
 
 
 ### 参考资料
+
 > [面向对象特征系列之“封装”](https://hyktech.gitee.io/javatech/2017/08/16/%E5%B0%81%E8%A3%85/#more)
