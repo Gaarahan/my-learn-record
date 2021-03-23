@@ -24,12 +24,13 @@ function rename(constructor) {
 
 // TODO TS: 实现对应装饰函数
 // TODO 怎么修改?
-function __decorate() {
+function __decorate(decorator, klass) {
+  return decorator(klass);
 }
 
 // TODO 编译器： 硬编码调用装饰函数及装饰器
 // TODO 修改成什么样子? 修改什么?
-__decorate();
+ClassDecoratorTest = __decorate(rename, ClassDecoratorTest);
 
 /*  -------------------- */
 

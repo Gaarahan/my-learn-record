@@ -25,12 +25,15 @@ function log(target, propertyKey, descriptor) {
 
 // TODO TS: 实现对应装饰函数
 // TODO 怎么修改?
-function __decorator() {
+function __decorator(decorator, target, key) {
+  const descriptorOld = Object.getOwnPropertyDescriptor(target, key);
+  const descriptorNew = decorator(target, key, descriptorOld);
+  Object.defineProperty(target, key, descriptorNew || descriptorOld);
 }
 
 // TODO 编译器： 硬编码调用装饰函数及装饰器
 // TODO 修改成什么样子? 修改什么?
-__decorator();
+__decorator(log, MethodDecoratorTest.prototype, 'foo');
 
 // 目的
 
