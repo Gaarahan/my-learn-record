@@ -10,7 +10,8 @@ type First<T extends any[]> = T extends never[] ? never : T[0];
 ```ts
 type First<T extends any[]> = T.length ? T[0] : never;
 ```
-但这样做时会报错, 此处的T是类型, 我们不能从其上访问数组上的length属性. 类型的判断要借助继承
+  - 此处的T是类型, 我们不能点出类型上的属性，length属性需要以T["length"]的形式访问.
+  - 即使我们点出了length属性，也不能将其作为boolean直接在三元表达式中使用
 
 ### Length of tuple
 
