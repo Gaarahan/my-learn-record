@@ -1,0 +1,55 @@
+@startuml
+title ng-generate 的工作流程
+
+start
+
+:set process title and check node version;
+note right: packages/angular/cli/bin/ng
+
+:initialize the cli configuration;
+note right: packages/angular/cli/lib/init.ts
+
+partition common-prepare {
+    :init logger (change console.log to logger);
+    note right: packages/angular/cli/lib/cli/index.ts
+    :prepare workspace by config file(eg. angualr.json);
+}
+
+partition load-command {
+    :get command name;
+    :load **command schema** as command-description;
+    note right: packages/angular/cli/commands/generate.json
+    :parse args, set command map (???);
+    :load command implement;
+}
+
+partition validate-and-start-run {
+    :check whether is within the scope of the project;
+    :initialize special definition of generate-command (parse schema and parse command);
+}
+
+partition workflow {
+    :create schematic;
+    partition call-schematic-to-get-**HostTree** {
+        :init factory with corresponding template;
+        note right: in this case: packages/schematics/angular/component/index.ts
+        :use factory to build **rule** for current command;
+        note right
+            **Desc**: pass command options to corresponding template
+            **What's in rule**:
+                * addDeclarationToNgModule
+                * mergeWith
+                * [ applyLintFix ]
+            ====
+            **Location**: packages/angular_devkit/schematics/src/engine/schematic.ts:76
+        end note
+        :call rule;
+    }
+    :commit **HostTree.action** store file to dryrun._filesToCreate;
+    note right: packages/angular_devkit/schematics/src/sink/sink.ts:146
+    :create file from dryrun._filesToCreate;
+    note right: packages/angular_devkit/schematics/src/sink/dryrun.ts:105
+}
+
+stop
+@enduml

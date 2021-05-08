@@ -1,0 +1,18 @@
+@startuml
+title Add declaration to NgModule
+
+start
+:get component options;
+:prepare needed variable;
+note right
+    * modulePath :      path of module file ( always find parent dir until got some file ends with .module.ts )
+    * source    :       parse files into ast objects
+    * componentPath :   path of component need be created
+    * relativePath  :   relative path between module and component
+    * classifiedName :  classified name
+end note
+:add declaration to module by ast;
+note right: all the operate of module was written into ast-utils.ts
+stop
+
+@enduml
