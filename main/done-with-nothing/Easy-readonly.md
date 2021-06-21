@@ -1,4 +1,4 @@
-## Easy readonly
+# Easy readonly
 
 ```typescript
 interface Todo {
