@@ -2,7 +2,7 @@
 
 > 文章来源: [Angular University](https://blog.angular-university.io/how-does-angular-2-change-detection-really-work/)
 
-  Angular 的变更检测机制比 AngularJS 中的同等机制更加透明与易于理解.但是其中仍旧有一些我们需要了解其底层的场景(如: 在进行性能优化时).因此接下来让我们就下面几个话题来进行深入研究:
+Angular 的变更检测机制比 AngularJS 中的同等机制更加透明与易于理解.但是其中仍旧有一些我们需要了解其底层的场景(如: 在进行性能优化时).因此接下来让我们就下面几个话题来进行深入研究:
 
 - 变更检测的实现原理
 - Angular 变更检测长什么样子? 我能看到它吗?
@@ -13,41 +13,42 @@
 - 使用 Immutable.js 简化 Angular 应用的构建
 - 总结
 
-  如果你需要更多关于`OnPush`变更检测的信息, 可以查看这篇博客[Angular OnPush Change Detection and Component Design - Avoid Common Pitfalls](https://blog.angular-university.io/onpush-change-detection-how-it-works)
+如果你需要更多关于`OnPush`变更检测的信息, 可以查看这篇博客[Angular OnPush Change Detection and Component Design - Avoid Common Pitfalls](https://blog.angular-university.io/onpush-change-detection-how-it-works)
 
 ## 变更检测的实现原理
 
-  Angular 可以检测组件的数据变化, 并自动的重绘视图以应用修改.但它是如何能在一个可能发生在页面任何位置的底层事件(例如点击按钮)发生之后做到这些的?
+Angular 可以检测组件的数据变化, 并自动的重绘视图以应用修改.但它是如何能在一个可能发生在页面任何位置的底层事件(例如点击按钮)发生之后做到这些的?
 
-  要理解其工作原理,我们需要认识到: JS 中, 整个运行态都是被设计为可以重写的. 在我们需要时,我们甚至可以重写`String`或`Number`中的方法.
+要理解其工作原理,我们需要认识到: JS 中, 整个运行态都是被设计为可以重写的. 在我们需要时,我们甚至可以重写`String`或`Number`中的方法.
 
 ### 重写浏览器的默认机制
 
-  Angular 在启动时,就会修改一些浏览器的底层API, 比如浏览器用来注册所有其所有事件(包括刚刚提到的点击事件)的`addEventListener`. Angular 会使用与这段代码等价的新版本来替换原来的`addEventListener`:
+Angular 在启动时,就会修改一些浏览器的底层API, 比如浏览器用来注册所有其所有事件(包括刚刚提到的点击事件)的`addEventListener`. Angular 会使用与这段代码等价的新版本来替换原来的`addEventListener`:
 
-  ```typescript
-  // 新版本的addEventListener
-  function addEventListener(eventName, callback) {
-       // 调用原始的 addEventListener
-       callRealAddEventListener(eventName, function() {
-          // 先调用原来的回调
-          callback(...);     
-          // 接着运行 Angular 特定的功能
-          var changed = angular.runChangeDetection();
-           if (changed) {
-               angular.reRenderUIPart();
-           }
-       });
-  }
-  ```
+```typescript
+// 新版本的addEventListener
+function addEventListener(eventName, callback) {
+     // 调用原始的 addEventListener
+     callRealAddEventListener(eventName, function() {
+        // 先调用原来的回调
+        callback(...);     
+        // 接着运行 Angular 特定的功能
+        var changed = angular.runChangeDetection();
+         if (changed) {
+             angular.reRenderUIPart();
+         }
+     });
+}
+```
 
-  新版本的 addEventListener 为任何事件处理程序添加了额外的功能：不仅调用了注册的回调，而且给了 angular 机会来运行变更检测并更新 UI。
+新版本的 addEventListener 为任何事件处理程序添加了额外的功能：不仅调用了注册的回调，而且给了 angular 机会来运行变更检测并更新 UI。
 
 ### 这种运行时的底层补丁是如何工作的?
 
   这些底层浏览器 API 的补丁是由 Angular 自身所装载的库 Zone.js 来完成的. 了解 zone 是什么也是很重要的.
 
-  <-- TODO: 这里的执行轮次是什么?  -->
+<p style="color:red"> TODO: 这里的执行轮次是什么?  <p/>
+
   Zone 本质上就是一个生存在多个 Javascript 虚拟机的执行轮次中的执行上下文. 是一个我们能用来为浏览器添加额外功能的通用机制. Angular 内部使用它来触发变更检测, 但它也可能有其他的使用方式, 如: 应用程序分析, 或者 在多个虚拟机执行轮次中进行长堆栈跟踪.
 
 ### 浏览器异步API支持
@@ -68,37 +69,37 @@
 
 每个 Angular 组件都会关联一个在应用启动时创建的变更检测器. 比如对于下面的 TodoItem 组件:
 
-  ```typescript
-  @Component({
-      selector: 'todo-item',
-      template: `<span class="todo noselect" 
-         (click)="onToggle()">{{todo.owner.firstname}} - {{todo.description}}
-         - completed: {{todo.completed}}</span>`
-  })
-  export class TodoItem {
-      @Input()
-      todo:Todo;
+```typescript
+@Component({
+    selector: 'todo-item',
+    template: `<span class="todo noselect" 
+       (click)="onToggle()">{{todo.owner.firstname}} - {{todo.description}}
+       - completed: {{todo.completed}}</span>`
+})
+export class TodoItem {
+    @Input()
+    todo:Todo;
 
-      @Output()
-      toggle = new EventEmitter<Object>();
+    @Output()
+    toggle = new EventEmitter<Object>();
 
-      onToggle() {
-          this.toggle.emit(this.todo);
-      }
-  }
-  ```
+    onToggle() {
+        this.toggle.emit(this.todo);
+    }
+}
+```
 
 这个组件接收一个Todo对象作为输入, 在 todo 的状态改变时 emit 出一个事件. 为了让示例更加有趣些, Todo 类包含了一个嵌套的对象:
 
-  ```typescript
-  export class Todo {
-      constructor(public id: number, 
-          public description: string, 
-          public completed: boolean, 
-          public owner: Owner) {
-      }
-  }
-  ```
+```typescript
+export class Todo {
+    constructor(public id: number, 
+        public description: string, 
+        public completed: boolean, 
+        public owner: Owner) {
+    }
+}
+```
 
 Todo 上有一个属性 `owner`, 是一个拥有两个属性 `firstname` 与 `lastname` 的对象.
 
@@ -108,60 +109,67 @@ Todo 上有一个属性 `owner`, 是一个拥有两个属性 `firstname` 与 `la
 
 当断点命中时, 我们可以通过追踪调用栈来查看变更检测:
 
+<p style="color:red"> TODO: 最新的机制长什么样?  <p/>
+
 [![40SkpF.jpg](https://z3.ax1x.com/2021/09/23/40SkpF.jpg)](https://imgtu.com/i/40SkpF)
 
 别担心, 你永远不需要debug这段代码. 这里也没有引入任何魔法, 这只是一些在应用启动时就构建好的一些简单的 Javascript 方法. 但它具体做了写什么呢?
 
-## 默认的变更检测机制如何工作
+## 默认的变更检测机制如何工作?
 
-This method might look strange at first, with all the strangely named variables. But by digging deeper into it, we notice that it's doing something very simple: for each expression used in the template, it's comparing the current value of the property used in the expression with the previous value of that property.
+这个方法可能一眼看上去很奇怪, 有很多命名怪异的变量. 但深入探索后会发现它做的事情很简单: 对于每一个在模板中使用的表达式, 比较其当前值与上一个值.
 
-If the property value before and after is different, it will set isChanged to true, and that's it! Well almost, it's comparing values by using a method called
-looseNotIdentical(), which is really just a === comparison with special logic for the NaN case (see here).
+如果前后不一致, 就将`isChanged`设置为 true, 仅此而已. 比较过程是通过使用一个叫`looseNotIdentical`的方法来完成的, 该方法本质上就是一个处理了`NaN`条件的特殊的`===`比较而已(代码在[这里](https://github.com/angular/angular/blob/50548fb5655bca742d1056ea91217a3b8460db08/modules/angular2/src/facade/lang.ts#L367))
 
-And what about the nested object owner?
-We can see in the change detector code that also the properties of the
-owner nested object are being checked for differences. But only the firstname property is being compared, not the lastname property.
+### 嵌套对象`owner`又是如何工作的呢?
 
-This is because lastname is not used in the component template ! Also, the top-level id property of Todo is not compared by the same reason.
+我们可以看到`owner`对象的属性也是会被检查的, 但只有`firstname`属性会被比较, `lastname`不会.
 
-With this, we can safely say that:
+这是因为`lastname`并未在模板中使用. 同样的, Todo的顶级`id`属性也因为同样的原因不会被比较.
 
-By default, Angular Change Detection works by checking if the value of template expressions have changed. This is done for all components.
+通过这个现象,我们可以断言:
+> 默认情况下, Angular变更检测通过检测模板表达式的值是否改变来工作. 这对所有组件都成立.
 
-We can also conclude that:
+我们也可以得出结论:
+> 默认情况下, Angular 不会对对象深度比较来触发变更, 它只会比较模板用到的属性.
 
-By default, Angular does not do deep object comparison to detect changes, it only takes into account properties used by the template
+## 为什么默认的变更检测是这样?
 
-Why does change detection work like this by default?
-One of the main goals of Angular is to be more transparent and easy to use, so that framework users don't have to go through great lengths to debug the framework and be aware of internal mechanisms in order to be able to use it effectively.
+Angular 的主要目标之一就是更加的透明易用, 这样框架的用户就不需要为了高效的使用而花费大量时间来 debug 框架以了解其内部机制.
 
-If you are familiar with AngularJs, think about $digest() and $apply() and all the pitfalls of when to use them / not to use them. One of the main goals of Angular is to avoid that.
+如果你熟悉 AngularJs, 可以想想 `$digest()` 和 `$apply()` 以及使用或不使用它们的所有陷阱.
 
-What about comparison by reference?
-The fact of the matter is that Javascript objects are mutable, and Angular wants to give full support out of the box for those.
+### 为什么不通过引用比较呢?
 
-Imagine what it would be if the Angular default change detection mechanism would be based on reference comparison of component inputs instead of the default mechanism? Even something as simple as a TODO application would be tricky to build: developers would have to be very careful to create a new Todo instead of simply updating properties.
+事实是: Javascript 的对象是易变得, 而 Angular 想对此提供开箱即用的支持.
 
-But as we will see, it's still possible to customize Angular change detection if we really need to.
+想象一下, 如果 Angular 默认的变更检测机制是基于引用比较的话会是什么样的? 即使像 TODO 这样简单的应用, 构建起来也会很棘手: 开发者需要非常小心的去创建一个新的Todo, 而不是简单的去更新其属性.
 
-What about performance?
-Notice how the change detector for the todo list component makes explicit reference to the todos property.
+但正如我们将要看到的, 如果我们真的需要自定义 Angular 的变更检测机制, 也是可以的.
 
-Another way to do this would be to loop dynamically through the properties of the component, making the code generic instead of specific to the component. This way we wouldn't have to build a change detector per component at startup time in the first place! So what's the story here?
+## 性能表现如何呢?
 
-A quick look inside the virtual machine
-This all has to do with the way the Javascript virtual machine works. The code for dynamically comparing properties, although generic cannot easily be optimized away into native code by the VM just-in-time compiler.
+请注意todo list 组件的变更检测是显式引用 `todos` 属性的.
 
-This is unlike the specific code of the change detector, which does explicitly access each of the component input properties. This code is very much like the code we would write ourselves by hand, and is very easy to be transformed into native code by the virtual machine.
+还有一种办法是动态的遍历组件的属性来进行变更检测, 这可以让代码更加通用, 而不需要对组件进行定制. 使用这种方法我们也不需要在启动时对每个组件都构建一个变更检测器. 那为什么不这样做呢?
 
-The end result of using generated but explicit detectors is a change detection mechanism that is very fast (more so than AngularJs), predictable and simple to reason about.
+> 译注: 上面的debug图中, 显式的使用了`obj.todos`这种形式来比较其`todos`属性(22行). 这就需要对每个组件构建一套特殊的变更检测函数. 而理论上可以使用第二种方式来做一个唯一的通用检测函数.
 
-But if we run into a performance corner case, is there a way to optimize change detection?
+### JS 虚拟机速览
 
-The OnPush change detection mode
-If our Todo list got really big, we could configure the TodoList component to update itself only when the Todo list changes. This can be done by updating the component change detection strategy to OnPush:
+这一切都与JS虚拟机的工作方式有关. 动态比较属性虽然通用, 但不容易被虚拟机JIT编译器优化成字节码.
 
+动态比较属性不同于定制变更检测代码, 后者显式的访问了组件的每一个输入属性, 而其对应的代码非常像我们自己写出的代码, 并且是易于被虚拟机转化为字节码的.
+
+使用生成的显式检测器的结果就是, 我们得到了一个非常快(比 AngularJs 更快), 可预测, 而且易于理解的变更检测机制.
+
+但是如果我们有更加苛刻的性能要求, 变更检测还能再优化吗?
+
+## `OnPush`变更检测策略
+
+如果我们的 Todo list 应用变得非常大, 我们可以配置[TodoList](https://github.com/jhades/blog.angular-university.io/blob/master/ng2-change-detection/src/todo_list.ts)组件来使其仅在 Todo list 发生改变时更新它自己. 这点可以通过将组件的变更监测策略更新为`OnPush`来完成:
+
+```typescript
 @Component({
     selector: 'todo-list',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -170,9 +178,11 @@ If our Todo list got really big, we could configure the TodoList component to up
 export class TodoList {
     ...
 }
-view raw04.ts hosted with ❤ by GitHub
-Let's now add to out application a couple of buttons: one to toggle the first item of the list by mutating it directly, and another that adds a Todo to the whole list. The code looks like this:
+```
 
+现在让我们给应用添加一些按钮: 一个通过直接修改来切换列表的第一项, 另一个给整个列表新加了一个 Todo. 代码如下:
+
+```typescript
 @Component({
     selector: 'app',
     template: `<div>
@@ -198,25 +208,27 @@ export class App {
         this.todos = newTodos;
     }
 }
-view raw05.ts hosted with ❤ by GitHub
-Lets now see how the two new buttons behave:
+```
 
-the first button "Toggle First Item" does not work! This is because the toggleFirst() method directly mutates an element of the list.
-TodoList cannot detect this, as its input reference todos did not change
-the second button does work! notice that the method addTodo() creates a copy of the todo list, and then adds an item to the copy and finally replaces the todos member variable with the copied list. This triggers change detection because the component detects a reference change in its input: it received a new list!
-In the second button, mutating directly the todos list will not work! we really need a new list.
-Is OnPush really just comparing inputs by reference?
-This is not the case, if you try to toggle a todo by clicking on it, it still works! Even if you switch TodoItem to OnPush as well. This is because
-OnPush does not check only for changes in the component inputs: if a component emits an event that will also trigger change detection.
+我们来看看这两个新按钮的行为如何:
 
-According to this quote from Victor Savkin in his blog:
+- 第一个按钮"Toggle First Item"不会生效. 这是因为`toggleFirst()`方法直接的修改了列表的一个元素.由于组件输入的引用并未发生改变, 因此`TodoList`不能检测到该变更.
+- 第二个按钮会生效. 注意方法`addTodo()`创建了一个todo list的复制, 然后添加了一个新的todo项, 并且最后使用复制的列表替换了`todos`. 由于组件检测到了引用改变(接收到了一个新的list), 因此触发了变更检测.
+- 在第二个按钮中, 如果直接的修改`todos`列表就不会生效了, 我们确实需要一个新的列表.
 
-When using OnPush detectors, then the framework will check an OnPush component when any of its input properties changes, when it fires an event, or when an Observable fires an event
+### `OnPush`真的只会比较输入的引用吗?
 
-Although allowing for better performance, the use of OnPush comes at a high complexity cost if used with mutable objects. It might introduce bugs that are hard to reason about and reproduce. But there is a way to make the use of OnPush viable.
+事实不是这样的, 如果你试试通过点击来切换todo状态, 它仍旧是工作的. 甚至在你将[TodoItem](https://github.com/jhades/blog.angular-university.io/blob/master/ng2-change-detection/src/todo_item.ts)切成`OnPush`后仍能工作.这是因为`OnPush`不止检测组件输入的变化: 如果一个组件emit了事件,也会触发变更检测.
 
-Using Immutable.js to simplify the building of Angular apps
-If we build our application using immutable objects and immutable lists only, its possible to use OnPush everywhere transparently, without the risk of stumbling into change detection bugs. This is because with immutable objects the only way to modify data is to create a new immutable object and replace the previous object. With an immutable object, we have the guarantee that:
+引用自 Victor Savkin 的博客:
+
+> 在使用`OnPush`检测时, 框架会检测一个OnPush的组件情况有: 该组件的任何输入属性改变时, 当其触发一个事件时, 或当一个 Observable 触发一个事件时.
+
+虽然性能变好了, 但使用`OnPush`也会导致使用易变对象时的高复杂度. 这可能会导致出现问题时难以定位与复现, 但还是有改善的办法.
+
+## 使用`Immutable.js`来简化 Angular 应用
+
+如果我们只使用不可变的(immutable)对象与列表, 就可以在任何地方透明的使用`OnPush`而无需担心深陷在变更检测的bug中. 这是因为对于不可变对象, 唯一的修改数据的方式就是创建一个新的不可变对象来替换它. 借助不可变对象,我们可以确保:
 
 a new immutable object will always trigger OnPush change detection
 we cannot accidentally create a bug by forgetting to create a new copy of an object because the only way to modify data is to create new objects
@@ -232,26 +244,29 @@ But that updating of the view does not itself trigger further changes which on t
 How to trigger a change detection loop in Angular?
 One way is if we are using lifecycle callbacks. For example in the TodoList component we can trigger a callback to another component that changes one of the bindings:
 
+```typescript
 ngAfterViewChecked() {
     if (this.callback && this.clicked) {
         console.log("changing status ...");
         this.callback(Math.random());
     }
 }
-view raw06.ts hosted with ❤ by GitHub
+```
+
 An error message will show up in the console:
 
 EXCEPTION: Expression '{{message}} in App@3:20' has changed after it was checked
 This error message is only thrown if we are running Angular in development mode. What happens if we enable production mode?
 
+```typescript
 @NgModule({
     declarations: [App],
     imports: [BrowserModule],
     bootstrap: [App]
 })
 export class AppModule {}
+```
 
-view raw07.ts hosted with ❤ by GitHub
 In production mode, the error would not be thrown and the issue would remain undetected.
 
 Are change detection issues frequent?
@@ -262,14 +277,15 @@ This guarantee comes at the expense of Angular always running change detection t
 turning on/off change detection, and triggering it manually
 There could be special occasions where we do want to turn off change detection. Imagine a situation where a lot of data arrives from the backend via a websocket. We might want to update a certain part of the UI only once every 5 seconds. To do so, we start by injecting the change detector into the component:
 
+```typescript
 constructor(private ref: ChangeDetectorRef) {
     ref.detach();
     setInterval(() => {
       this.ref.detectChanges();
     }, 5000);
   }
-  
-  
+```
+
 As we can see, we just detach the change detector, which effectively turns off change detection. Then we simply trigger it manually every 5 seconds by calling detectChanges().
 
 Let's now quickly summarize everything that we need to know about Angular change detection: what is it, how does it work and what are the main types of change detection available.
