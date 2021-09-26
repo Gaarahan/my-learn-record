@@ -239,12 +239,14 @@ export class App {
 
 ## 避免循环变更检测: Production vs Development 模式
 
-One of the important properties of Angular change detection is that unlike AngularJs it enforces a uni-directional data flow: when the data on our controller classes gets updated, change detection runs and updates the view.
+Angular 变更检测的一个重要属性就是: 不同于 AngularJs , 它强制执行单向数据流, 当控制器类的数据改变时, 变更检测会运行并更新视图.
 
-But that updating of the view does not itself trigger further changes which on their turn trigger further updates to the view, creating what in AngularJs was called a digest cycle.
+但这个更新视图的行为,并不会进一步再触发变更, 这样的变更进一步再触发视图更新便是 AngularJs 中的`digest cycle`
 
-How to trigger a change detection loop in Angular?
-One way is if we are using lifecycle callbacks. For example in the TodoList component we can trigger a callback to another component that changes one of the bindings:
+### Angular 中如何触发循环的变更检测?
+
+一个办法就是使用生命周期回调. 例如在 TodoList 组件中, 我们可以触发一个回调来修改另一个组件的绑定值: 
+> 译注: 这是早期的 Angular 版本, 现在在 ngAfterViewChecked 与 ngAfterViewInit 中更改绑定值也会触发报错, 报错信息有所不同(ExpressionChangedAfterItHasBeenCheckedError)
 
 ```typescript
 ngAfterViewChecked() {
@@ -255,10 +257,10 @@ ngAfterViewChecked() {
 }
 ```
 
-An error message will show up in the console:
+控制台中会出现如下报错:
+> EXCEPTION: Expression '{{message}} in App@3:20' has changed after it was checked
 
-EXCEPTION: Expression '{{message}} in App@3:20' has changed after it was checked
-This error message is only thrown if we are running Angular in development mode. What happens if we enable production mode?
+这个错误只会在我们使用 development 模式运行 Angular 时抛出. production 模式又是什么表现呢?
 
 ```typescript
 @NgModule({
@@ -269,12 +271,13 @@ This error message is only thrown if we are running Angular in development mode.
 export class AppModule {}
 ```
 
-In production mode, the error would not be thrown and the issue would remain undetected.
+在 production 模式下, error不会被抛出, 并且问题将无法被发现.
 
-Are change detection issues frequent?
-We really have to go out of our way to trigger a change detection loop, but just in case its better to always use development mode during the development phase, as that will avoid the problem.
+### 变更检测问题经常发生吗?
 
-This guarantee comes at the expense of Angular always running change detection twice, the second time for detecting this type of cases. In production mode change detection is only run once.
+我们确实会需要想办法去触发一个变更检测循环, 但是以防万一, 最好总是在开发阶段使用 development 模式, 这样就可以避免问题的发生.
+
+避免问题的代价是 Angular 始终会运行两次变更检测, 第二次检测就是为了避免此场景. 但在 production 模式下, 变更检测只会运行一次.
 
 turning on/off change detection, and triggering it manually
 There could be special occasions where we do want to turn off change detection. Imagine a situation where a lot of data arrives from the backend via a websocket. We might want to update a certain part of the UI only once every 5 seconds. To do so, we start by injecting the change detector into the component:
