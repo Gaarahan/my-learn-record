@@ -230,13 +230,15 @@ export class App {
 
 如果我们只使用不可变的(immutable)对象与列表, 就可以在任何地方透明的使用`OnPush`而无需担心深陷在变更检测的bug中. 这是因为对于不可变对象, 唯一的修改数据的方式就是创建一个新的不可变对象来替换它. 借助不可变对象,我们可以确保:
 
-a new immutable object will always trigger OnPush change detection
-we cannot accidentally create a bug by forgetting to create a new copy of an object because the only way to modify data is to create new objects
-A good choice for going immutable is to use the Immutable.js library. This library provides immutable primitives for building applications, like for example immutable objects (Maps) and immutable lists.
+- 一个新的不可变对象总是会触发`OnPush`变更检测.
+- 不会再因为忘记为对象创建新的复制而导致bug, 因为修改数据的唯一方式就是创建一个新对象.
 
-This library can be also be used in a type-safe way, check this previous post for an example on how to do it.
+使用不可变对象的一个不错的选择就是使用[Immutable.js](https://facebook.github.io/immutable-js/)库. 该库为构建应用提供了不可变基础, 例如不可变的对象以及不可变的列表
 
-Avoiding change detection loops: Production vs Development mode
+该库也能以类型安全的方式来应用, 可以在[这篇博客](https://blog.angular-university.io/angular-2-application-architecture-building-flux-like-apps-using-redux-and-immutable-js-js/)中找到例子.
+
+## 避免循环变更检测: Production vs Development 模式
+
 One of the important properties of Angular change detection is that unlike AngularJs it enforces a uni-directional data flow: when the data on our controller classes gets updated, change detection runs and updates the view.
 
 But that updating of the view does not itself trigger further changes which on their turn trigger further updates to the view, creating what in AngularJs was called a digest cycle.
