@@ -241,7 +241,7 @@ export class App {
 
 Angular 变更检测的一个重要属性就是: 不同于 AngularJs , 它强制执行单向数据流, 当控制器类的数据改变时, 变更检测会运行并更新视图.
 
-但这个更新视图的行为,并不会进一步再触发变更, 这样的变更进一步再触发视图更新便是 AngularJs 中的`digest cycle`
+但这个更新视图的行为,并不会进一步再触发变更, 这样的变更进一步再触发视图更新便是 AngularJs 中消化循环(digest cycle)
 
 ### Angular 中如何触发循环的变更检测?
 
@@ -277,10 +277,11 @@ export class AppModule {}
 
 我们确实会需要想办法去触发一个变更检测循环, 但是以防万一, 最好总是在开发阶段使用 development 模式, 这样就可以避免问题的发生.
 
-避免问题的代价是 Angular 始终会运行两次变更检测, 第二次检测就是为了避免此场景. 但在 production 模式下, 变更检测只会运行一次.
+但避免问题的代价是 Angular 始终会运行两次变更检测, 第二次检测就是为了避免此场景. 但在 production 模式下, 变更检测只会运行一次.
 
-turning on/off change detection, and triggering it manually
-There could be special occasions where we do want to turn off change detection. Imagine a situation where a lot of data arrives from the backend via a websocket. We might want to update a certain part of the UI only once every 5 seconds. To do so, we start by injecting the change detector into the component:
+## 打开/关掉变更检测, 并手动触发它
+
+可能有些特殊场景下, 我们想要关掉变更检测. 想象一下: 当有大量的数据由后端服务通过 websocket 发来, 我们可能只想每5秒更新固定的部分UI. 为了做到这点, 我们可以从为组件注入变更检测器(change detector)开始:
 
 ```typescript
 constructor(private ref: ChangeDetectorRef) {
@@ -291,31 +292,31 @@ constructor(private ref: ChangeDetectorRef) {
   }
 ```
 
-As we can see, we just detach the change detector, which effectively turns off change detection. Then we simply trigger it manually every 5 seconds by calling detectChanges().
+正如代码中所见, 我们去绑定(detach)了变更检测器, 这便有效的关掉了变更检测. 接下来我们便可简单的通过调用`detectChanges()`来手动每5秒触发.
 
-Let's now quickly summarize everything that we need to know about Angular change detection: what is it, how does it work and what are the main types of change detection available.
+现在让我们快速的总结一下所有关于变更检测我们需要知道的事: 是什么, 怎么工作以及变更检测支持的主要类型.
 
-Summary
-Angular change detection is a built-in framework feature that ensures the automatic synchronization between the data of a component and its HTML template view.
+## 总结
 
-Change detection works by detecting common browser events like mouse clicks, HTTP requests, and other types of events, and deciding if the view of each component needs to be updated or not.
+Angular 变更检测是框架的一个内置属性, 用来保证组件数据以及HTML模板视图间的自动同步.
 
-There are two types of change detection:
+变更检测通过监测通用的浏览器事件来工作(例如鼠标点击, HTTP请求及其他类型的时间), 并决定是否每个组件的视图需要被更新.
 
-default change detection: Angular decides if the view needs to be updated by comparing all the template expression values before and after the occurrence of an event, for all components of the component tree
-OnPush change detection: this works by detecting if some new data has been explicitly pushed into the component, either via a component input or an Observable subscribed to using the async pipe
-The Angular default change detection mechanism is actually quite similar to AngularJs: it compares the values of templates expressions before and after a browser event to see if something changed. It does so for all components. But there are also some important differences:
+有两种类型的变更检测:
 
-For one there are no change detection loops, or a digest cycle as it was named in AngularJs. This allows to reason about each component just by looking at its template and its controller.
+- 默认变更检测: Angular 通过比较组件树中所有组件的事件发生前后的模板表达式的值来决定师傅需要更新视图.
+- OnPush 变更检测: 该模式通过监测是否有一些新数据被显式的推送给了组件: 要么通过组件的输入, 要么通过使用异步管道订阅的 Observable.
 
-Another difference is that the mechanism of detecting changes in a component is much faster due to the way change detectors are built.
+Angular 默认的变更检测机制实际是与 AngularJs 十分相似的: 通过在浏览器事件后比较模板表达式的值来观察是否存在变更, 对所有组件都是如此. 但相对 AngularJs 还是有一些不同:
 
-Finally and unlike in AngularJs, the change detection mechanism is customizable.
+- 首先, 不存在变更检测循环, 或在 AngularJs 中又被称为消化循环(digest cycle). 这就允许我们只需要通过查看模板及其控制器来理解每一个组件了.
+- 另一个区别是, 由于构建变更检测器的方式不同, 变更检测机制要快的多.
+- 最后, 不同于 AngularJs, Angular 中的变更检测机制是可以自定义的.
 
-Do we really need to know that much about change detection?
-Probably for 95% of applications and use cases it's safe to say that Angular Change Detection just works and there is not much that we need to know about it. Still it's useful to have an idea on how it works, for several reasons:
+### 我们是否需要如此了解变更检测?
 
-for one it helps us understand some development error messages that we might come across like the one concerning change detection loops
-it helps us to read error stack traces, all those zone.afterTurnDone() all of a sudden look a lot more clear
-in cases where performance is at a premium (and are we sure we shouldn't just add pagination to that huge data table?), knowing about change detection helps us do performance optimizations.
-If you would like to know about more advanced Angular Core features like change detection, we recommend checking the Angular Core Deep Dive course, where change detection is covered in much more detail.
+可能在95%的应用及用例中, 可以肯定的说, 变更检测正常工作并且我们不需要去了解他. 但由于以下理由, 了解它的工作机制仍旧是有用的:
+
+- 首先, 这能帮助我们理解一些开发时的涉及变更检测的报错信息.
+- 它能帮助我们阅读报错的跟踪栈, 所有的那些`zone.afterTurnDone()`突然看起来清晰多了.
+- 在性能非常重要的情况下(我们真的确定不给那些巨量数据的表格增加分页吗?), 了解变更检测可以帮我们进行性能优化.
