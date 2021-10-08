@@ -1,6 +1,7 @@
 # Angular变更检测是如何工作的?
 
 > 文章来源: [Angular University](https://blog.angular-university.io/how-does-angular-2-change-detection-really-work/)
+> 译注: 该文章发表于四年前, debug部分代码已经与现在不太相同, 但原理相通.
 
 Angular 的变更检测机制比 AngularJS 中的同等机制更加透明与易于理解.但是其中仍旧有一些我们需要了解其底层的场景(如: 在进行性能优化时).因此接下来让我们就下面几个话题来进行深入研究:
 
@@ -47,9 +48,7 @@ function addEventListener(eventName, callback) {
 
   这些底层浏览器 API 的补丁是由 Angular 自身所装载的库 Zone.js 来完成的. 了解 zone 是什么也是很重要的.
 
-<p style="color:red"> TODO: 这里的执行轮次是什么?  <p/>
-
-  Zone 本质上就是一个生存在多个 Javascript 虚拟机的执行轮次中的执行上下文. 是一个我们能用来为浏览器添加额外功能的通用机制. Angular 内部使用它来触发变更检测, 但它也可能有其他的使用方式, 如: 应用程序分析, 或者 在多个虚拟机执行轮次中进行长堆栈跟踪.
+  Zone 本质上就是一个生存在多个 Javascript 虚拟机的执行轮次(Javascript VM execution turns, 即我们常说的事件循环, 见此[问答](https://stackoverflow.com/questions/38783544/angular2-understanding-vm-turns-and-events))中的执行上下文. 是一个我们能用来为浏览器添加额外功能的通用机制. Angular 内部使用它来触发变更检测, 但它也可能有其他的使用方式, 如: 应用程序分析, 或者 在多个虚拟机执行轮次中进行长堆栈跟踪.
 
 ### 浏览器异步API支持
 
