@@ -58,7 +58,7 @@ function addEventListener(eventName, callback) {
 - setTimeout() 与 setInterval()
 - Ajax HTTP 请求
 
-实际上, 还有其他许多浏览器的API被 Zone.js 打了补丁, 用来透明的触发 Angular 的变更检测, 例如 Websockets. 可以通过Zone.js的[测试用例](https://github.com/angular/zone.js/tree/master/test/patch)来查看目前都支持哪些API.
+实际上, 还有其他许多浏览器的API被 Zone.js 打了补丁, 用来透明的触发 Angular 的变更检测, 例如 Websockets. 可以通过Zone.js的[测试用例](https://github.com/angular/angular/tree/master/packages/zone.js/test/browser)来查看目前都支持哪些API.
 
 目前该变更检测机制的一个限制是由于一些特殊原因, 一些浏览器的异步API是不被Zone.js所支持的, 因此对应的变更检测不会触发, 例如 IndexedDB 的回调.
 
@@ -114,7 +114,7 @@ Todo 上有一个属性 `owner`, 是一个拥有两个属性 `firstname` 与 `la
 > [![56HmTS.png](https://z3.ax1x.com/2021/10/22/56HmTS.png)](https://imgtu.com/i/56HmTS)
 > 可以看到，NG 借助 Zone.js，在微任务队列清空后，开始进行变更检测，从根组件向子组件一路触发。
 
-别担心, 你永远不需要debug这段代码. 这里也没有引入任何魔法, 这只是一些在应用启动时就构建好的一些简单的 Javascript 方法. 但它具体做了写什么呢?
+别担心, 你永远不需要debug这段代码. 这里也没有引入任何魔法, 这只是一些在应用启动时就构建好的一些简单的 Javascript 方法. 但它具体做了些什么呢?
 
 ## 默认的变更检测机制如何工作?
 
@@ -142,7 +142,7 @@ Angular 的主要目标之一就是更加的透明易用, 这样框架的用户�
 
 ### 为什么不通过引用比较呢?
 
-事实是: Javascript 的对象是易变得, 而 Angular 想对此提供开箱即用的支持.
+事实是: Javascript 对象是**易变**的, 而 Angular 想对此提供开箱即用的支持.
 
 想象一下, 如果 Angular 默认的变更检测机制是基于引用比较的话会是什么样的? 即使像 TODO 这样简单的应用, 构建起来也会很棘手: 开发者需要非常小心的去创建一个新的Todo, 而不是简单的去更新其属性.
 
@@ -154,7 +154,7 @@ Angular 的主要目标之一就是更加的透明易用, 这样框架的用户�
 
 还有一种办法是动态的遍历组件的属性来进行变更检测, 这可以让代码更加通用, 而不需要对组件进行定制. 使用这种方法我们也不需要在启动时对每个组件都构建一个变更检测器. 那为什么不这样做呢?
 
-> 译注: 上面的debug图中, 显式的使用了`obj.todos`这种形式来比较其`todos`属性(22行). 这就需要对每个组件构建一套特殊的变更检测函数. 而理论上可以使用第二种方式来做一个唯一的通用检测函数.
+> 译注: 上面的 debug 图中, 显式的使用了`obj.todos`这种形式来比较其`todos`属性(22行). 这就需要对每个组件构建一套特殊的变更检测函数. 而理论上可以使用这里提到的方式来做一个唯一且通用的检测函数.
 
 ### JS 虚拟机速览
 
@@ -215,7 +215,7 @@ export class App {
 
 - 第一个按钮"Toggle First Item"不会生效. 这是因为`toggleFirst()`方法直接的修改了列表的一个元素.由于组件输入的引用并未发生改变, 因此`TodoList`不能检测到该变更.
 - 第二个按钮会生效. 注意方法`addTodo()`创建了一个todo list的复制, 然后添加了一个新的todo项, 并且最后使用复制的列表替换了`todos`. 由于组件检测到了引用改变(接收到了一个新的list), 因此触发了变更检测.
-- 在第二个按钮中, 如果直接的修改`todos`列表就不会生效了, 我们确实需要一个新的列表.
+- 在第二个按钮中, 如果直接去修改`todos`列表就不会生效了。想触发变更检测的话，这里的新的列表就是必须的.
 
 ### `OnPush`真的只会比较输入的引用吗?
 
@@ -223,18 +223,18 @@ export class App {
 
 引用自 Victor Savkin 的博客:
 
-> 在使用`OnPush`检测时, 框架会检测一个OnPush的组件情况有: 该组件的任何输入属性改变时, 当其触发一个事件时, 或当一个 Observable 触发一个事件时.
+> 在使用`OnPush`检测时, 框架会检测一个OnPush的组件情况有: 该组件的任何输入属性改变时；当组件触发一个事件时；或当一个 Observable 触发一个事件时.
 
 虽然性能变好了, 但使用`OnPush`也会导致使用易变对象时的高复杂度. 这可能会导致出现问题时难以定位与复现, 但还是有改善的办法.
 
 ## 使用`Immutable.js`来简化 Angular 应用
 
-如果我们只使用不可变的(immutable)对象与列表, 就可以在任何地方透明的使用`OnPush`而无需担心深陷在变更检测的bug中. 这是因为对于不可变对象, 唯一的修改数据的方式就是创建一个新的不可变对象来替换它. 借助不可变对象,我们可以确保:
+如果我们只使用不可变的(immutable)对象与列表, 就可以在任何地方透明的使用`OnPush`而无需担心深陷在变更检测的 bug 中. 这是因为对于不可变对象, 唯一的修改数据的方式就是创建一个新的不可变对象来替换它. 借助不可变对象,我们可以确保:
 
 - 一个新的不可变对象总是会触发`OnPush`变更检测.
-- 不会再因为忘记为对象创建新的复制而导致bug, 因为修改数据的唯一方式就是创建一个新对象.
+- 不会再因为忘记为对象创建新的复制而导致 bug, 因为修改数据的唯一方式就是创建一个新对象.
 
-使用不可变对象的一个不错的选择就是使用[Immutable.js](https://facebook.github.io/immutable-js/)库. 该库为构建应用提供了不可变基础, 例如不可变的对象以及不可变的列表
+使用不可变对象的一个不错的选择就是使用 [Immutable.js](https://facebook.github.io/immutable-js/) 库. 该库为构建应用提供了不可变基础, 例如不可变的对象以及不可变的列表
 
 该库也能以类型安全的方式来应用, 可以在[这篇博客](https://blog.angular-university.io/angular-2-application-architecture-building-flux-like-apps-using-redux-and-immutable-js-js/)中找到例子.
 
@@ -242,12 +242,12 @@ export class App {
 
 Angular 变更检测的一个重要属性就是: 不同于 AngularJs , 它强制执行单向数据流, 当控制器类的数据改变时, 变更检测会运行并更新视图.
 
-但这个更新视图的行为,并不会进一步再触发变更, 这样的变更进一步再触发视图更新便是 AngularJs 中消化循环(digest cycle)
+但这个更新视图的行为,并**不会进一步再触发变更**（这样的变更进一步再触发视图更新便是 AngularJs 中消化循环(digest cycle)）
 
 ### Angular 中如何触发循环的变更检测?
 
 一个办法就是使用生命周期回调. 例如在 TodoList 组件中, 我们可以触发一个回调来修改另一个组件的绑定值: 
-> 译注: 这是早期的 Angular 版本, 现在在 ngAfterViewChecked 与 ngAfterViewInit 中更改绑定值也会触发报错, 报错信息有所不同(ExpressionChangedAfterItHasBeenCheckedError)
+> 译注: 这是早期的 Angular 版本, 现在在 ngAfterViewChecked 与 ngAfterViewInit 中更改绑定值时，报错信息有所不同：`ExpressionChangedAfterItHasBeenCheckedError`
 
 ```typescript
 ngAfterViewChecked() {
@@ -276,7 +276,7 @@ export class AppModule {}
 
 ### 变更检测问题经常发生吗?
 
-我们确实会需要想办法去触发一个变更检测循环, 但是以防万一, 最好总是在开发阶段使用 development 模式, 这样就可以避免问题的发生.
+我们确实会需要触发一个变更检测循环, 但是以防万一, 最好总是在开发阶段使用 development 模式, 这样就可以避免问题的发生.
 
 但避免问题的代价是 Angular 始终会运行两次变更检测, 第二次检测就是为了避免此场景. 但在 production 模式下, 变更检测只会运行一次.
 
@@ -293,7 +293,7 @@ constructor(private ref: ChangeDetectorRef) {
   }
 ```
 
-正如代码中所见, 我们去绑定(detach)了变更检测器, 这便有效的关掉了变更检测. 接下来我们便可简单的通过调用`detectChanges()`来手动每5秒触发.
+正如代码中所见, 我们**去绑定**(detach)了变更检测器, 这便有效的关掉了变更检测. 接下来我们便可简单的通过调用`detectChanges()`来手动每5秒触发.
 
 现在让我们快速的总结一下所有关于变更检测我们需要知道的事: 是什么, 怎么工作以及变更检测支持的主要类型.
 
@@ -305,7 +305,7 @@ Angular 变更检测是框架的一个内置属性, 用来保证组件数据以�
 
 有两种类型的变更检测:
 
-- 默认变更检测: Angular 通过比较组件树中所有组件的事件发生前后的模板表达式的值来决定师傅需要更新视图.
+- 默认变更检测: Angular 通过比较组件树中所有组件的事件发生前后的模板表达式的值来决定是否需要更新视图.
 - OnPush 变更检测: 该模式通过监测是否有一些新数据被显式的推送给了组件: 要么通过组件的输入, 要么通过使用异步管道订阅的 Observable.
 
 Angular 默认的变更检测机制实际是与 AngularJs 十分相似的: 通过在浏览器事件后比较模板表达式的值来观察是否存在变更, 对所有组件都是如此. 但相对 AngularJs 还是有一些不同:
@@ -320,4 +320,4 @@ Angular 默认的变更检测机制实际是与 AngularJs 十分相似的: 通�
 
 - 首先, 这能帮助我们理解一些开发时的涉及变更检测的报错信息.
 - 它能帮助我们阅读报错的跟踪栈, 所有的那些`zone.afterTurnDone()`突然看起来清晰多了.
-- 在性能非常重要的情况下(我们真的确定不给那些巨量数据的表格增加分页吗?), 了解变更检测可以帮我们进行性能优化.
+- 在性能非常重要的情况下, 了解变更检测可以帮我们进行性能优化(但我们真的确定不给那些巨量数据的表格增加分页吗?).
